@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>First React App</title>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    
+    <script src='https://unpkg.com/babel-standalone@6.26.0/babel.min.js'></script>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script type='text/babel'>
+
+    //  In order to pass info in components,we use props as a arguments   
+    function FriendList (props) {
+        return (
+            <ul>
+            {props.list.map((name) =>(
+
+                // In table tags case react needs a unique key
+                <li key={name}>                          
+                <span>{name}</span>
+                <button onClick={() => props.onRemoveFriend(name)}>Remove</button>
+                </li>
+            ))}
+
+            </ul>
+
+        )
+    }
+
+    class App extends React.Component {
+
+        constructor(props) {
+            super(props) 
+            this.state = {
+                friends : ['B-Boy', 'Luke', 'Jaison'],
+                input : ''
+            } 
+        
+        //We use bind so we can make this to point the instance of App i.e. instance of React.Component class
+         this.handleRemoveFriend = this.handleRemoveFriend.bind(this)
+         this.updateInput = this.updateInput.bind(this) 
+         this.handleAddFriend = this.handleAddFriend.bind(this)     
+   
+        }
+
+        handleAddFriend() {
+        
+        //We here pass setState as a function bcoz we depend on the previous state to update the state
+        this.setState((currentState) =>{
+          return {
+
+              // We are using here concat instead of push coz we don't want to modify the original array rather creating a new one
+              friends : currentState.friends.concat([currentState.input]),
+              input: ''
+          }
+        })
+
+        }
+
+        handleRemoveFriend(name) {
+            this.setState((currentState) => {
+                return {
+                    friends: currentState.friends.filter((friend) =>friend !== name)
+                }
+            })
+
+        }
+
+        updateInput(e) {
+            const value = e.target.value
+            
+            //We can update value of input like this when we are not focusing on the previous state of input
+            this.setState({                  
+            input : value
+            })
+        }
+
+       render()  {
+        return (
+            <div>
+            <input 
+            type="text"
+            placeholder="new friend"
+            value = {this.state.input}
+            onChange = {this.updateInput}
+            /> 
+            <button onClick={this.handleAddFriend}>Submit</button>
+
+              <FriendList 
+              list={this.state.friends} 
+              onRemoveFriend = {this.handleRemoveFriend}
+              />
+            </div>
+        )} 
+    }
+    
+
+    ReactDOM.render(
+        <App/>,
+        document.getElementById('app')
+    )
+
+    </script>
+    
+</body>
+</html>
